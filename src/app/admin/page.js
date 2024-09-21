@@ -2,9 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { auth, db } from "../../../firebase"; // Caminho relativo
-
-
 import { collection, getDocs } from "firebase/firestore";
+import { h1, h2 } from  '../globals.css'
 
 const AdminPage = () => {
   const [user, setUser] = useState(null);
