@@ -38,7 +38,7 @@ const LoginPage = () => {
         <img src="/logoBemEstar.png" alt="Logomarca" className="logo" />
       </div>
 
-      <h1>Login</h1>
+      <h1>Bem Estar - Admin</h1>
       <form onSubmit={handleLogin}>
         <input
           type="email"
