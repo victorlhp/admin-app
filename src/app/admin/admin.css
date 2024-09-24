@@ -5,16 +5,17 @@
     margin: 0 auto;
     padding: 20px;
     font-family: Arial, sans-serif;
+    background-color: #917efa;
   }
   
   h1 {
     text-align: center;
-    color: #333;
+    color: #fff;
   }
   
   h2 {
     text-align: center;
-    color: #666;
+    color: #fff;
   }
   
   .search-section {
@@ -77,7 +78,7 @@
   .results-section {
     margin-top: 30px;
     padding: 20px;
-    background-color: #f1f1f1;
+    background-color: rgb(177, 172, 209);
     border-radius: 5px;
   }
   
@@ -93,7 +94,7 @@
   
   h3, h4 {
     text-align: center;
-    color: #333;
+    color: #fff;
   }
   
   ul li {
