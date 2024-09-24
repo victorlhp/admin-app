@@ -1,16 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { auth, db } from "../../../firebase";
+import { auth, db } from "../../../firebase"; 
 import { collection, getDocs, query, where } from "firebase/firestore";
-import { useRouter } from "next/navigation";
-import '../globals.css';
+import '../globals.css'; 
+import { getUserData } from "../../../firestoreService"; 
 
 const AdminPage = () => {
   const [user, setUser] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
-  const router = useRouter();
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [results, setResults] = useState(null);
 
   // Verifica se o administrador está logado
   useEffect(() => {
@@ -25,35 +26,61 @@ const AdminPage = () => {
     return () => unsubscribe();
   }, []);
 
-  // Função de busca por email, nome ou UID
+  // Função de busca
   const handleSearch = async () => {
     if (searchQuery.trim()) {
-      // Fazendo três buscas separadas por email, nome ou UID
-      const qEmail = query(collection(db, "usuarios"), where("email", "==", searchQuery));
-      const qName = query(collection(db, "usuarios"), where("nome", "==", searchQuery));
-      const qUid = query(collection(db, "usuarios"), where("__name__", "==", searchQuery)); // UID é o ID do documento no Firestore
+      // Faz a busca por email
+      const qEmail = query(
+        collection(db, "usuarios"),
+        where("email", "==", searchQuery)
+      );
+      const querySnapshotEmail = await getDocs(qEmail);
+      let users = querySnapshotEmail.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
 
-      // Executa todas as consultas de busca
-      const [emailSnapshot, nameSnapshot, uidSnapshot] = await Promise.all([
-        getDocs(qEmail),
-        getDocs(qName),
-        getDocs(qUid)
-      ]);
+      // Se não encontrar por email, tenta buscar por nome
+      if (users.length === 0) {
+        const qNome = query(
+          collection(db, "usuarios"),
+          where("nome", "==", searchQuery)
+        );
+        const querySnapshotNome = await getDocs(qNome);
+        users = querySnapshotNome.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+      }
 
-      // Combina os resultados das três buscas, evitando duplicatas
-      const users = [
-        ...emailSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
-        ...nameSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
-        ...uidSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
-      ];
+      // Se não encontrar por nome, tenta buscar diretamente pelo UID
+      if (users.length === 0) {
+        // Aqui você simplesmente usa `doc.id` diretamente no Firestore, já que o UID é o ID do documento
+        const qUID = query(collection(db, "usuarios"));
+        const querySnapshotUID = await getDocs(qUID);
+        users = querySnapshotUID.docs
+          .filter((doc) => doc.id === searchQuery) // Filtra pelo UID
+          .map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+      }
 
       setFilteredUsers(users);
     }
   };
 
-  // Redireciona para a página de resultados com o ID do usuário
-  const viewResults = (userId) => {
-    router.push(`/admin/results/${userId}`); // Navega para a página de resultados
+  // Exibe os resultados ao clicar em "Ver Resultados"
+  const viewResults = async (userId) => {
+    const userData = await getUserData(userId);
+    if (userData) {
+      setSelectedUser(userData);
+      setResults({
+        pontuacaoAnsiedade: userData.pontuacaoAnsiedade || "N/A",
+        pontuacaoDepressao: userData.pontuacaoDepressao || "N/A",
+        respostas: userData,
+      });
+    }
   };
 
   if (!user) {
@@ -62,31 +89,67 @@ const AdminPage = () => {
 
   return (
     <div>
-      <h1>Página do Administrador</h1>
-      <h2>Bem-vindo, {user.email}</h2>
+      <h1>Admin Page</h1>
+      <h2>Welcome, {user.email}</h2>
 
+      {/* Área de busca */}
       <div>
         <input
           type="text"
-          placeholder="Buscar por email, nome ou UID"
+          placeholder="Search by email, name, or UID"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <button onClick={handleSearch}>Buscar</button>
+        <button onClick={handleSearch}>Search</button>
       </div>
 
+      {/* Lista de usuários filtrados */}
       <ul>
         {filteredUsers.length > 0 ? (
           filteredUsers.map((user) => (
             <li key={user.id}>
-              {user.email || user.nome || user.id} -{" "}
+              {user.email || user.nome} -{" "}
               <button onClick={() => viewResults(user.id)}>Ver Resultados</button>
             </li>
           ))
         ) : (
-          <li>Nenhum usuário encontrado</li>
+          <li>No users found</li>
         )}
       </ul>
+
+      {/* Exibe os resultados do usuário selecionado */}
+      {selectedUser && results && (
+        <div>
+          <h2>Resultados de {selectedUser.nome || selectedUser.email}</h2>
+          <p>Pontuação de Ansiedade: {results.pontuacaoAnsiedade}</p>
+          <p>Pontuação de Depressão: {results.pontuacaoDepressao}</p>
+
+          {/* Exibe as respostas separadas em duas colunas */}
+          <h3>Respostas Individuais</h3>
+          <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+            <div>
+              <h4>Ansiedade</h4>
+              <ul>
+                {[1, 3, 5, 7, 9, 11, 13].map((i) => (
+                  <li key={`pergunta-${i}`}>
+                    Pergunta {i}: {results.respostas[`pergunta-${i.toString().padStart(2, '0')}`] || "0"}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h4>Depressão</h4>
+              <ul>
+                {[2, 4, 6, 8, 10, 12, 14].map((i) => (
+                  <li key={`pergunta-${i}`}>
+                    Pergunta {i}: {results.respostas[`pergunta-${i.toString().padStart(2, '0')}`] || "0"}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
