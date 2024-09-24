@@ -4,7 +4,7 @@ import { auth } from "../../../firebase"; // Ajuste o caminho conforme necessár
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { sendPasswordResetEmail } from "firebase/auth";
-import { button, container,  a, h1, h2 } from  '../globals.css'
+import './login.css'; // Certifique-se de que o caminho está correto
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -12,9 +12,6 @@ const LoginPage = () => {
   const [error, setError] = useState(null);
   const [resetMessage, setResetMessage] = useState("");
   const router = useRouter();
-
-
-    
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -37,6 +34,10 @@ const LoginPage = () => {
 
   return (
     <div className="container">
+      <div className="logo-container">
+        <img src="/logoBemEstar.png" alt="Logomarca" className="logo" />
+      </div>
+
       <h1>Login</h1>
       <form onSubmit={handleLogin}>
         <input
@@ -44,21 +45,24 @@ const LoginPage = () => {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          className="input"
         />
         <input
           type="password"
           placeholder="Senha"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          className="input"
         />
-        <button type="submit">Entrar</button>
+        <button type="submit" className="button-content">Entrar</button>
         {error && <p className="error">{error}</p>}
         {resetMessage && <p className="success">{resetMessage}</p>}
       </form>
       <p>
-        <a onClick={handlePasswordReset}>Esqueceu a senha?</a>
+        <a onClick={handlePasswordReset} className="forgot-password-button-text">Esqueceu a senha?</a>
       </p>
     </div>
   );
-}
+};
+
 export default LoginPage;

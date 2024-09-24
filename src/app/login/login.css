@@ -1,0 +1,79 @@
+/* Defina a largura e o padding de todo o container */
+.container {
+    width: 100%;
+    padding: 20px;
+    background-color: #CCCCFF;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+  
+  /* Centraliza e estiliza o logo */
+  .logo-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .logo {
+    max-width: 80%;
+    height: auto;
+  }
+  
+  /* Estiliza o campo de entrada */
+  .input {
+    width: 100%;
+    max-width: 400px;
+    height: 50px;
+    border: 1px solid #000;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #ebebff;
+    font-family: 'Inder_400Regular';
+  }
+  
+  /* Estiliza o botão de login */
+  .button-content {
+    padding: 10px 20px;
+    background-color: #6666ff;
+    color: white;
+    font-size: 16px;
+    font-family: 'Inder_400Regular';
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+    max-width: 400px;
+    margin-top: 10px;
+  }
+  
+  .button-content:hover {
+    background-color: #5555ee;
+  }
+  
+  /* Estiliza o texto de erro e sucesso */
+  .error {
+    color: red;
+    margin-top: 10px;
+  }
+  
+  .success {
+    color: green;
+    margin-top: 10px;
+  }
+  
+  /* Estiliza o link para recuperação de senha */
+  .forgot-password-button-text {
+    color: #000;
+    font-size: 16px;
+    text-decoration: underline;
+    text-align: center;
+    font-family: 'Inder_400Regular';
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  
