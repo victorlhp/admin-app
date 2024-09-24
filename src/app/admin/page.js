@@ -89,8 +89,8 @@ const AdminPage = () => {
 
   return (
     <div>
-      <h1>Admin Page</h1>
-      <h2>Welcome, {user.email}</h2>
+      <h1>Bem Estar - Admin</h1>
+      <h2>Bem Vindo, {user.email}</h2>
 
       {/* Área de busca */}
       <div>
@@ -100,7 +100,7 @@ const AdminPage = () => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <button onClick={handleSearch}>Search</button>
+        <button onClick={handleSearch}>Buscar</button>
       </div>
 
       {/* Lista de usuários filtrados */}
@@ -113,7 +113,7 @@ const AdminPage = () => {
             </li>
           ))
         ) : (
-          <li>No users found</li>
+          <li>Usuário não encontrado</li>
         )}
       </ul>
 
