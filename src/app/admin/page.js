@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { auth, db } from "../../../firebase"; 
 import { collection, getDocs, query, where } from "firebase/firestore";
-import '../globals.css'; 
+import './admin.css'; 
 import { getUserData } from "../../../firestoreService"; 
 
 const AdminPage = () => {
@@ -88,12 +88,12 @@ const AdminPage = () => {
   }
 
   return (
-    <div>
+    <div className="container">
       <h1>Bem Estar - Admin</h1>
       <h2>Bem Vindo, {user.email}</h2>
-
+  
       {/* Área de busca */}
-      <div>
+      <div className="search-section">
         <input
           type="text"
           placeholder="Search by email, name, or UID"
@@ -102,7 +102,7 @@ const AdminPage = () => {
         />
         <button onClick={handleSearch}>Buscar</button>
       </div>
-
+  
       {/* Lista de usuários filtrados */}
       <ul>
         {filteredUsers.length > 0 ? (
@@ -116,23 +116,23 @@ const AdminPage = () => {
           <li>Usuário não encontrado</li>
         )}
       </ul>
-
+  
       {/* Exibe os resultados do usuário selecionado */}
       {selectedUser && results && (
-        <div>
+        <div className="results-section">
           <h2>Resultados de {selectedUser.nome || selectedUser.email}</h2>
           <p>Pontuação de Ansiedade: {results.pontuacaoAnsiedade}</p>
           <p>Pontuação de Depressão: {results.pontuacaoDepressao}</p>
-
+  
           {/* Exibe as respostas separadas em duas colunas */}
           <h3>Respostas Individuais</h3>
-          <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+          <div className="flex-columns">
             <div>
               <h4>Ansiedade</h4>
               <ul>
                 {[1, 3, 5, 7, 9, 11, 13].map((i) => (
                   <li key={`pergunta-${i}`}>
-                    Pergunta {i}: {results.respostas[`pergunta-${i.toString().padStart(2, '0')}`] || "0"}
+                    Pergunta {i}: {results.respostas[`pergunta-${i.toString().padStart(2, "0")}`] || "0"}
                   </li>
                 ))}
               </ul>
@@ -142,7 +142,7 @@ const AdminPage = () => {
               <ul>
                 {[2, 4, 6, 8, 10, 12, 14].map((i) => (
                   <li key={`pergunta-${i}`}>
-                    Pergunta {i}: {results.respostas[`pergunta-${i.toString().padStart(2, '0')}`] || "0"}
+                    Pergunta {i}: {results.respostas[`pergunta-${i.toString().padStart(2, "0")}`] || "0"}
                   </li>
                 ))}
               </ul>
@@ -152,6 +152,8 @@ const AdminPage = () => {
       )}
     </div>
   );
+  
+  
 };
 
 export default AdminPage;
